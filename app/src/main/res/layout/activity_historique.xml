@@ -10,7 +10,7 @@
         android:id="@+id/emptyHistoryTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Chargement de l'historique..."
+        android:text="@string/name"
         android:textSize="18sp"
         android:paddingBottom="10dp" />
 
