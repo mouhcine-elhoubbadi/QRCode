@@ -27,9 +27,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var previewView: PreviewView
     private lateinit var resultTextView: TextView
     private lateinit var historyButton: ImageButton
+    private lateinit var flashButton: ImageButton
+    private var isFlashOn = false
+    private var camera: Camera? = null
 
-    private val scanHistory = mutableListOf<String>()  // قائمة لحفظ عمليات المسح
 
+    private val scanHistory = mutableListOf<String>()
     @SuppressLint("MissingInflatedId")
     @ExperimentalGetImage
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,6 +79,15 @@ class MainActivity : AppCompatActivity() {
             intent.putStringArrayListExtra("SCAN_HISTORY", ArrayList(scanHistory))
             startActivity(intent)
         }
+        flashButton = findViewById(R.id.flashButton)
+        flashButton.setOnClickListener {
+            if (camera != null) {
+                isFlashOn = !isFlashOn
+                camera?.cameraControl?.enableTorch(isFlashOn)
+                flashButton.setImageResource(if (isFlashOn) R.drawable.flashon else R.drawable.flashof)
+            }
+        }
+
 
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
@@ -102,6 +114,8 @@ class MainActivity : AppCompatActivity() {
             try {
                 cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
+                camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
+
             } catch (e: Exception) {
                 Log.e("QRcode", "Use case binding failed", e)
             }
